@@ -20,8 +20,12 @@ ObjectFormer.egg-info
 
 # Checkpoints
 CKPT
-checkpoints
+checkpoints/
 
 # Logs
 runs
 logs/
+visualizations/
+
+# Dataset
+training_dataset/
