@@ -1,14 +1,14 @@
 NUM_GPUS: 1
 DATALOADER:
-  BATCH_SIZE: 16
+  BATCH_SIZE: 4
   NUM_WORKERS: 4
 TRAIN:
   ENABLE: False
-  MAX_EPOCH: 40
+  MAX_EPOCH: 100
 TEST:
   ENABLE: True
-  CHECKPOINT_PATH: 'objectformer_doc_tamper_adamw_40eps/checkpoints/ckpt_epoch_00039.pyth'
-  THRES: 0.6
+  CHECKPOINT_PATH: 'objectformer_doc_tamper_adamw_bs16_256px/checkpoints/ckpt_epoch_00099.pyth'
+  THRES: 0.5
 MODEL:
   MODEL_NAME: ObjectFormer
   INPLANES: 64
@@ -24,7 +24,7 @@ MODEL:
   NUM_CLASSES: 1
 OPTIMIZER:
   OPTIMIZER_METHOD: adamw
-  BASE_LR: 0.0002
+  BASE_LR: 0.0001
   WEIGHT_DECAY: 0.001
 SCHEDULER:
   SCHEDULER_TYPE: cosine
@@ -57,7 +57,7 @@ DATASET:
         RandomCrop,
         Normalize
       ]
-    RESIZE_PARAMS: [512, 512]
+    RESIZE_PARAMS: [288, 288]
     RANDOMCROP_PARAMS: [256, 256]
     ROTATE_PARAMS: [10]
     COARSEDROPOUT_PARAMS: [10, 10]
@@ -66,7 +66,7 @@ DATASET:
   
   TEST_AUGMENTATIONS:
     COMPOSE: [Resize, Normalize]
-    RESIZE_PARAMS: [256, 256]
+    RESIZE_PARAMS: [384, 384]
     NORMALIZE_PARAMS: [[0.485, 0.456, 0.406], [0.229, 0.224, 0.225]]
 
-OUTPUT_DIR: 'objectformer_doc_tamper_adamw_40eps'
+OUTPUT_DIR: 'objectformer_doc_tamper_adamw_bs16_256px'
