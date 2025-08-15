@@ -119,12 +119,32 @@ class DiceLoss(nn.Module):
         super().__init__()
         smooth = loss_cfg.get("smooth", 1.0)
         self.smooth = smooth
+        # Add class weight support for handling pixel imbalance
+        self.class_weight = loss_cfg.get("CLASS_WEIGHT", None)
+        if self.class_weight is not None:
+            self.class_weight = torch.tensor(self.class_weight, dtype=torch.float32)
     
     def forward(self, pred, gt):
+        original_shape = gt.shape
         gt = gt.view(-1)
         pred = pred.view(-1)
 
         intersection = (gt * pred).sum()
-        dice = (2.0 * intersection + self.smooth) / (torch.square(gt).sum() + torch.square(pred).sum() + self.smooth)
+        
+        if self.class_weight is not None:
+            # Apply class weights - weight background (0) and foreground (1) pixels differently
+            weights = self.class_weight[0] * (1 - gt) + self.class_weight[1] * gt
+            if pred.device != weights.device:
+                weights = weights.to(pred.device)
+            
+            # Weighted intersection and union
+            weighted_intersection = (weights * gt * pred).sum()
+            weighted_gt_sum = (weights * torch.square(gt)).sum()
+            weighted_pred_sum = (weights * torch.square(pred)).sum()
+            
+            dice = (2.0 * weighted_intersection + self.smooth) / (weighted_gt_sum + weighted_pred_sum + self.smooth)
+        else:
+            # Original dice calculation
+            dice = (2.0 * intersection + self.smooth) / (torch.square(gt).sum() + torch.square(pred).sum() + self.smooth)
 
         return 1.0 - dice

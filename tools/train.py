@@ -53,7 +53,11 @@ def train_epoch(
                 for p in outputs[1]:
                     localization_loss += localization_loss_func(samples['mask'], p)
             
-            loss = detection_loss + localization_loss
+            # Apply loss rebalancing weights from config
+            lambda_cls = cfg.get('LOSS', {}).get('LAMBDA_CLS', 0.25)  # default from default.yaml
+            lambda_seg = cfg.get('LOSS', {}).get('LAMBDA_SEG', 1.0)   # default from default.yaml
+            
+            loss = lambda_cls * detection_loss + lambda_seg * localization_loss
         
         second_order = hasattr(optimizer, 'is_second_order') and optimizer.is_second_order
         scaler.scale(loss).backward(create_graph=second_order)
@@ -66,7 +70,13 @@ def train_epoch(
         scaler.update()
 
         torch.cuda.synchronize()
-        train_meter.update(loss=loss.item(), detection_loss = detection_loss.item(), localization_loss=localization_loss.item())
+        train_meter.update(
+            loss=loss.item(), 
+            detection_loss=detection_loss.item(), 
+            localization_loss=localization_loss.item(),
+            weighted_det_loss=(lambda_cls * detection_loss).item(),
+            weighted_loc_loss=(lambda_seg * localization_loss).item()
+        )
         train_meter.update(lr=optimizer.param_groups[0]['lr'])
 
         if writer:
