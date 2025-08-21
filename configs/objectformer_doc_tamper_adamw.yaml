@@ -4,7 +4,7 @@ DATALOADER:
   NUM_WORKERS: 4
 TRAIN:
   ENABLE: True
-  MAX_EPOCH: 1
+  MAX_EPOCH: 20
 TEST:
   ENABLE: False
   CHECKPOINT_PATH: 'objectformer_doc_tamper_adamw_bs16_256px/checkpoints/ckpt_epoch_00099.pyth'
@@ -24,13 +24,13 @@ MODEL:
   NUM_CLASSES: 1
 OPTIMIZER:
   OPTIMIZER_METHOD: adamw
-  BASE_LR: 0.0003
+  BASE_LR: 0.0005
   WEIGHT_DECAY: 0.0001
 SCHEDULER:
   SCHEDULER_TYPE: cosine
-  MIN_LR: 0.00001
+  MIN_LR: 0.0001
   WARMUP_EPOCHS: 3
-  WARMUP_LR: 0.00005
+  WARMUP_LR: 0.0001
 DATASET:
   DATASET_NAME: TamperingDataset
   ROOT_DIR: training_dataset

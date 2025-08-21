@@ -22,6 +22,9 @@ ObjectFormer.egg-info
 CKPT
 checkpoints/
 
+# Pre-trained weights
+pretrained/
+
 # Logs
 runs
 logs/
