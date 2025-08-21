@@ -24,11 +24,14 @@ python run.py --cfg configs/objectformer_bs24_lr2.5e-4.yaml
 ```
 
 ### Environment Setup
-Use Python 3.10 and use 'uv' as the package manager.
+Use Python 3.10 and use 'uv' as the package manager. The project uses pyproject.toml with locked dependencies for reproducible builds.
 
 ```bash
-# Install dependencies
-uv pip install -r requirements.txt
+# Install dependencies (creates virtual env and installs from uv.lock)
+uv sync
+
+# Activate the virtual environment
+source .venv/bin/activate
 
 # Verify CUDA availability
 python -c "import torch; print(torch.cuda.is_available())"
