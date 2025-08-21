@@ -40,6 +40,38 @@ The exported ONNX model includes both detection (binary classification) and loca
 - Detection: `[batch, 1]` - Binary probability for tampering detection
 - Localization: 3 multi-scale masks `[batch, 1, H, W]` - Pixel-level tampering masks
 
+## ONNX Inference
+
+To run inference on images using the exported ONNX model:
+
+```bash
+# Test inference on a single image
+uv run python exports/inference/test_inference.py \
+    --image path/to/your/image.jpg \
+    --model exports/onnx/objectformer_full.onnx \
+    --threshold 0.5
+
+# The inference wrapper automatically applies sigmoid to detection logits
+# and provides both binary classification and pixel-level localization
+```
+
+**Python API usage:**
+```python
+from exports.inference.onnx_inference_wrapper import ObjectFormerONNXInference
+
+# Initialize inference wrapper
+inferencer = ObjectFormerONNXInference("exports/onnx/objectformer_full.onnx")
+
+# Run inference
+results = inferencer.predict("path/to/image.jpg", threshold=0.5)
+
+# Results contain:
+# - is_tampered: Boolean classification result
+# - detection_confidence: Sigmoid probability [0-1]  
+# - binary_mask: Binarized localization mask
+# - confidence_mask: Raw localization confidence map
+```
+
 Note that we only release the checkpoints trained on the publicly available dataset ([CASIAV2](https://drive.google.com/file/d/1vd7o7JI-_EukyplskeuSWuham4iCWuTq/view?usp=sharing) and [IMD20](https://drive.google.com/file/d/1IWQvoMl9iaefCLbF5gXVbdB2ICfSXLPP/view?usp=sharing)). For a fair comparison with our method, please finetune it with your data.
 
 ## Citation

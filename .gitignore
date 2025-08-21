@@ -36,3 +36,6 @@ visualizations/
 
 # Dataset
 training_dataset/
+
+# Inference results
+inference_results/

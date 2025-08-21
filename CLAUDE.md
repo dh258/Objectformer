@@ -40,6 +40,26 @@ uv run python exports/export_to_onnx.py \
     --validate
 ```
 
+### ONNX Inference
+```bash
+# Test inference on a single image
+uv run python exports/inference/test_inference.py \
+    --image path/to/your/image.jpg \
+    --model exports/onnx/objectformer_full.onnx \
+    --threshold 0.5
+
+# Example with training dataset image
+uv run python exports/inference/test_inference.py \
+    --image training_dataset/images/005307e7-93c.jpg \
+    --model exports/onnx/objectformer_full.onnx \
+    --threshold 0.5
+```
+
+**Note:** The inference wrapper automatically:
+- Applies sigmoid activation to detection logits (model outputs single logit for binary classification)
+- Resizes input images to 288x288 (matching ONNX model requirements)  
+- Provides both binary classification and pixel-level localization results
+
 ### Environment Setup
 Use Python 3.10 and use 'uv' as the package manager. The project uses pyproject.toml with locked dependencies for reproducible builds.
 
