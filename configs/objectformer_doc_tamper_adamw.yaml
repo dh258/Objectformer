@@ -3,11 +3,11 @@ DATALOADER:
   BATCH_SIZE: 8
   NUM_WORKERS: 4
 TRAIN:
-  ENABLE: True
+  ENABLE: False
   MAX_EPOCH: 20
 TEST:
-  ENABLE: False
-  CHECKPOINT_PATH: 'objectformer_doc_tamper_adamw_bs16_256px/checkpoints/ckpt_epoch_00099.pyth'
+  ENABLE: True
+  CHECKPOINT_PATH: 'objectformer_doc_tamper_adamw/checkpoints/ckpt_epoch_00019.pyth'
   THRES: 0.5
 MODEL:
   MODEL_NAME: ObjectFormer
@@ -66,7 +66,7 @@ DATASET:
   
   TEST_AUGMENTATIONS:
     COMPOSE: [Resize, Normalize]
-    RESIZE_PARAMS: [320, 320]
+    RESIZE_PARAMS: [288, 288]
     NORMALIZE_PARAMS: [[0.485, 0.456, 0.406], [0.229, 0.224, 0.225]]
 
 OUTPUT_DIR: 'objectformer_doc_tamper_adamw_test'

@@ -25,6 +25,10 @@ checkpoints/
 # Pre-trained weights
 pretrained/
 
+# ONNX weights
+onnx/
+*.onnx
+
 # Logs
 runs
 logs/

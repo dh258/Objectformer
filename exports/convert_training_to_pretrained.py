@@ -27,7 +27,7 @@ def extract_model_metadata(checkpoint):
     metadata = {
         "architecture": "ObjectFormer",
         "model_type": model_cfg.get("META_ARCHITECTURE", "ObjectFormer"),
-        "input_size": [224, 224],
+        "input_size": [288, 288],
         "num_classes": 2,  # Binary classification (authentic/tampered)
         "model_config": {
             "layers": model_cfg.get("LAYERS", [1, 1, 3, 1]),

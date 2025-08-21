@@ -23,6 +23,23 @@ uv run python run.py --cfg configs/your_config.yaml
 uv run python run.py --cfg configs/objectformer_bs24_lr2.5e-4.yaml
 ```
 
+### ONNX Export
+```bash
+# Export trained model to ONNX format for deployment
+uv run python exports/export_to_onnx.py \
+    --checkpoint exports/pretrained/objectformer_pretrained.pth \
+    --output exports/onnx/objectformer_full.onnx \
+    --validate
+
+# Custom input size and batch size
+uv run python exports/export_to_onnx.py \
+    --checkpoint path/to/your/weights.pth \
+    --output path/to/output.onnx \
+    --input_size 320 \
+    --batch_size 1 \
+    --validate
+```
+
 ### Environment Setup
 Use Python 3.10 and use 'uv' as the package manager. The project uses pyproject.toml with locked dependencies for reproducible builds.
 

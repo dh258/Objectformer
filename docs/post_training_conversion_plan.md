@@ -56,7 +56,7 @@ def convert_training_to_pretrained(checkpoint_path, output_path):
         'model_state': checkpoint['model_state'],
         'metadata': {
             'architecture': 'ObjectFormer',
-            'input_size': [224, 224],
+            'input_size': [288, 288],
             'num_classes': 2,  # binary classification
             'training_dataset': 'custom_tampering_dataset',
             'performance': {
@@ -80,7 +80,7 @@ def convert_training_to_pretrained(checkpoint_path, output_path):
    - Remove training-specific layers/operations
 
 2. **Input/Output Specification**
-   - Define expected tensor shapes: `[batch, 3, 224, 224]`
+   - Define expected tensor shapes: `[batch, 3, 288, 288]`
    - Specify output formats:
      - Detection head: `[batch, 1]` (binary probability)
      - Localization head: `[batch, 1, H, W]` (pixel masks)
