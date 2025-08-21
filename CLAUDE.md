@@ -11,16 +11,16 @@ ObjectFormer is a PyTorch implementation for image manipulation detection and lo
 ### Training
 ```bash
 # Basic training with default config
-python run.py --cfg configs/objectformer_bs24_lr2.5e-4.yaml
+uv run python run.py --cfg configs/objectformer_bs24_lr2.5e-4.yaml
 
 # Training with custom config  
-python run.py --cfg configs/your_config.yaml
+uv run python run.py --cfg configs/your_config.yaml
 ```
 
 ### Testing/Evaluation
 ```bash
 # Set TRAIN.ENABLE to False in config, then run:
-python run.py --cfg configs/objectformer_bs24_lr2.5e-4.yaml
+uv run python run.py --cfg configs/objectformer_bs24_lr2.5e-4.yaml
 ```
 
 ### Environment Setup
@@ -34,7 +34,7 @@ uv sync
 source .venv/bin/activate
 
 # Verify CUDA availability
-python -c "import torch; print(torch.cuda.is_available())"
+uv run python -c "import torch; print(torch.cuda.is_available())"
 ```
 
 ## Architecture Overview

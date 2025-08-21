@@ -9,7 +9,7 @@ Please first download the imagenet-pretrained model from this [Google Drive](htt
 Then for training, you could use:
 
 ```
-python tools/run.py --cfg configs/objectformer_bs24_lr2.5e-4.yaml
+uv run python tools/run.py --cfg configs/objectformer_bs24_lr2.5e-4.yaml
 ```
 
 while for evaluation, you could set TRAIN.ENABLE to False. For a better peformance on Pixel F1, you should adjust the TEST.THRES (0.5 by default) on each testing dataset.
