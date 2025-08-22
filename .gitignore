@@ -22,6 +22,13 @@ ObjectFormer.egg-info
 CKPT
 checkpoints/
 
+# Pre-trained weights
+pretrained/
+
+# ONNX weights
+onnx/
+*.onnx
+
 # Logs
 runs
 logs/
@@ -29,3 +36,6 @@ visualizations/
 
 # Dataset
 training_dataset/
+
+# Inference results
+inference_results/
