@@ -3,16 +3,16 @@ DATALOADER:
   BATCH_SIZE: 12
   NUM_WORKERS: 4
 TRAIN:
-  ENABLE: False
+  ENABLE: True
   MAX_EPOCH: 40
 TEST:
-  ENABLE: True
+  ENABLE: False
   CHECKPOINT_PATH: 'objectformer_doc_tamper_adamw_imagenet/checkpoints/ckpt_epoch_00037.pyth'
   THRES: 0.5
 MODEL:
   MODEL_NAME: ObjectFormer
   INPLANES: 64
-  PRETRAINED: "ckpt/imagenet_pre.pth"
+  PRETRAINED: "ckpt/casiav2_and_imd20_ep40_lr2.5e-4.pth"
   NUM_LAYERS: [1, 1, 3, 1]
   NUM_CHS: [96, 192, 384, 768]
   NUM_STRIDES: [1, 2, 2, 2]
@@ -59,4 +59,4 @@ DATASET:
     RESIZE_PARAMS: [320, 320]
     NORMALIZE_PARAMS: [[0.485, 0.456, 0.406], [0.229, 0.224, 0.225]]
 
-OUTPUT_DIR: 'objectformer_doc_tamper_adamw_imd20'
+OUTPUT_DIR: 'objectformer_doc_tamper_adamw_imd20_casia'

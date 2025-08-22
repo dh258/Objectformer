@@ -343,6 +343,8 @@ class ObjectFormer(nn.Module):
             state_dict = torch.load(pretrained, map_location=torch.device("cpu"))
             if "state_dict" in state_dict.keys():
                 state_dict = state_dict["state_dict"]
+            elif "model_state" in state_dict.keys():
+                state_dict = state_dict["model_state"]
             missing, unexpected = self.load_state_dict(state_dict, strict=False)
             print("Missing parameters: {} \n Unexpected: {}".format(missing, unexpected))
             return
