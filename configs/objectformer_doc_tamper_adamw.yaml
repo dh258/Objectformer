@@ -3,11 +3,11 @@ DATALOADER:
   BATCH_SIZE: 12
   NUM_WORKERS: 4
 TRAIN:
-  ENABLE: True
+  ENABLE: False
   MAX_EPOCH: 40
 TEST:
-  ENABLE: False
-  CHECKPOINT_PATH: 'objectformer_doc_tamper_adamw_imagenet/checkpoints/ckpt_epoch_00037.pyth'
+  ENABLE: True
+  CHECKPOINT_PATH: 'objectformer_doc_tamper_adamw_imd20_casia/checkpoints/ckpt_epoch_00039.pyth'
   THRES: 0.5
 MODEL:
   MODEL_NAME: ObjectFormer
@@ -24,8 +24,8 @@ MODEL:
   NUM_CLASSES: 1
 OPTIMIZER:
   OPTIMIZER_METHOD: adamw
-  BASE_LR: 0.0002
-  WEIGHT_DECAY: 0.001
+  BASE_LR: 0.00003
+  WEIGHT_DECAY: 0.0001
 DATASET:
   DATASET_NAME: TamperingDataset
   ROOT_DIR: training_dataset
