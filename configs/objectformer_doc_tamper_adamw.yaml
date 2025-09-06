@@ -4,10 +4,10 @@ DATALOADER:
   NUM_WORKERS: 4
 TRAIN:
   ENABLE: False
-  MAX_EPOCH: 15
+  MAX_EPOCH: 40
 TEST:
   ENABLE: True
-  CHECKPOINT_PATH: 'objectformer_doc_tamper_adamw_imd20_casia_verihubs_v1/checkpoints/ckpt_epoch_00014.pyth'
+  CHECKPOINT_PATH: 'objectformer_doc_tamper_adamw_ktp_base/checkpoints/ckpt_epoch_00031.pyth'
   THRES: 0.5
 MODEL:
   MODEL_NAME: ObjectFormer
@@ -24,7 +24,7 @@ MODEL:
   NUM_CLASSES: 1
 OPTIMIZER:
   OPTIMIZER_METHOD: adamw
-  BASE_LR: 0.00001
+  BASE_LR: 0.00005
   WEIGHT_DECAY: 0.0001
 DATASET:
   DATASET_NAME: TamperingDataset
@@ -37,21 +37,20 @@ DATASET:
   TRAIN_AUGMENTATIONS:
     COMPOSE:
       [
+        Resize,
+        RandomCrop,
         [
-          RandomBrightnessContrast
+          RandomBrightnessContrast,
+          HueSaturationValue,
+          CLAHE
         ],
         GaussNoise,
-        HorizontalFlip,
-        Rotate,
         ImageCompression,
-        OpticalDistortion,
-        Resize,
         Normalize
       ]
-    RESIZE_PARAMS: [320, 320]
-    ROTATE_PARAMS: [5]
-    COARSEDROPOUT_PARAMS: [10, 10]
-    IMAGECOMPRESSION_PARAMS: [75, 90]
+    RESIZE_PARAMS: [380, 380]
+    RANDOMCROP_PARAMS: [320, 320]
+    IMAGECOMPRESSION_PARAMS: [65, 80]
     NORMALIZE_PARAMS: [[0.485, 0.456, 0.406], [0.229, 0.224, 0.225]]
   
   TEST_AUGMENTATIONS:
@@ -59,4 +58,11 @@ DATASET:
     RESIZE_PARAMS: [320, 320]
     NORMALIZE_PARAMS: [[0.485, 0.456, 0.406], [0.229, 0.224, 0.225]]
 
-OUTPUT_DIR: 'objectformer_doc_tamper_adamw_imd20_casia_verihubs_v1'
+SCHEDULER:
+  SCHEDULER_TYPE: step
+  DECAY_EPOCHS: 1000
+  DECAY_RATE: 1.0
+  WARMUP_LR: 0
+  WARMUP_EPOCHS: 0
+
+OUTPUT_DIR: 'objectformer_doc_tamper_adamw_ktp_base'

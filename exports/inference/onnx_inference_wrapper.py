@@ -14,7 +14,7 @@ class ObjectFormerONNXInference:
     def __init__(
         self,
         onnx_model_path: str,
-        input_size: int = 288,
+        input_size: int = 320,
         providers: Optional[list] = None,
     ):
         """
@@ -22,7 +22,7 @@ class ObjectFormerONNXInference:
 
         Args:
             onnx_model_path: Path to ONNX model file
-            input_size: Input image size (default: 288)
+            input_size: Input image size (default: 320)
             providers: ONNX Runtime providers. If None, uses CPU provider.
         """
         self.input_size = input_size

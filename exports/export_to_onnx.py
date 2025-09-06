@@ -22,7 +22,7 @@ def export_objectformer_to_onnx(
     weights_path: str,
     output_path: str,
     metadata_path: str = None,
-    input_shape: tuple = (1, 3, 288, 288),
+    input_shape: tuple = (1, 3, 320, 320),
     opset_version: int = 17
 ):
     """
@@ -242,7 +242,7 @@ def main():
     parser.add_argument('--checkpoint', required=True, help='Path to pretrained weights (.pth)')
     parser.add_argument('--metadata', help='Path to metadata JSON file (auto-detected if not provided)')
     parser.add_argument('--output', required=True, help='Output path for ONNX model (.onnx)')
-    parser.add_argument('--input_size', default=288, type=int, help='Input image size')
+    parser.add_argument('--input_size', default=320, type=int, help='Input image size')
     parser.add_argument('--batch_size', default=1, type=int, help='Batch size')
     parser.add_argument('--opset', default=17, type=int, help='ONNX opset version (17 recommended for transformers)')
     parser.add_argument('--validate', action='store_true', help='Validate ONNX outputs match PyTorch')
