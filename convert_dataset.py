@@ -24,7 +24,7 @@ def find_mask_for_image(image_name: str, mask_dir: Path) -> str:
 
 
 def convert_dataset(
-    source_dir: str = "training_dataset/ktp-only",
+    source_dir: str = "/home/darell/avento/datasets/ktp-synthetic",
     target_dir: str = "training_dataset",
     train_ratio: float = 0.8,
     val_ratio: float = 0.1,
@@ -109,32 +109,32 @@ def convert_dataset(
     # Shuffle each class separately to ensure balanced distribution
     random.shuffle(genuine_files)
     random.shuffle(tampered_files)
-    
+
     # Calculate splits for each class separately
     genuine_count = len(genuine_files)
     tampered_count = len(tampered_files)
-    
+
     # Split genuine files
     genuine_train_end = int(genuine_count * train_ratio)
     genuine_val_end = genuine_train_end + int(genuine_count * val_ratio)
-    
+
     genuine_train = genuine_files[:genuine_train_end]
     genuine_val = genuine_files[genuine_train_end:genuine_val_end]
     genuine_test = genuine_files[genuine_val_end:]
-    
+
     # Split tampered files
     tampered_train_end = int(tampered_count * train_ratio)
     tampered_val_end = tampered_train_end + int(tampered_count * val_ratio)
-    
+
     tampered_train = tampered_files[:tampered_train_end]
     tampered_val = tampered_files[tampered_train_end:tampered_val_end]
     tampered_test = tampered_files[tampered_val_end:]
-    
+
     # Combine and shuffle each split
     train_files = genuine_train + tampered_train
     val_files = genuine_val + tampered_val
     test_files = genuine_test + tampered_test
-    
+
     random.shuffle(train_files)
     random.shuffle(val_files)
     random.shuffle(test_files)
@@ -153,16 +153,16 @@ def convert_dataset(
 
     # Step 5: Print summary with class distribution
     all_files = train_files + val_files + test_files
-    
+
     def count_classes(file_list):
         genuine = sum(1 for _, _, label in file_list if label == 0)
         tampered = sum(1 for _, _, label in file_list if label == 1)
         return genuine, tampered
-    
+
     train_genuine, train_tampered = count_classes(train_files)
     val_genuine, val_tampered = count_classes(val_files)
     test_genuine, test_tampered = count_classes(test_files)
-    
+
     print("\n" + "=" * 50)
     print("CONVERSION SUMMARY")
     print("=" * 50)
@@ -170,9 +170,15 @@ def convert_dataset(
     print(f"Total tampered images: {len(tampered_files)}")
     print(f"Total files: {len(all_files)}")
     print(f"\nStratified split distribution:")
-    print(f"  Train: {len(train_files)} files ({len(train_files) / len(all_files) * 100:.1f}%) - {train_genuine} genuine, {train_tampered} tampered")
-    print(f"  Val:   {len(val_files)} files ({len(val_files) / len(all_files) * 100:.1f}%) - {val_genuine} genuine, {val_tampered} tampered")
-    print(f"  Test:  {len(test_files)} files ({len(test_files) / len(all_files) * 100:.1f}%) - {test_genuine} genuine, {test_tampered} tampered")
+    print(
+        f"  Train: {len(train_files)} files ({len(train_files) / len(all_files) * 100:.1f}%) - {train_genuine} genuine, {train_tampered} tampered"
+    )
+    print(
+        f"  Val:   {len(val_files)} files ({len(val_files) / len(all_files) * 100:.1f}%) - {val_genuine} genuine, {val_tampered} tampered"
+    )
+    print(
+        f"  Test:  {len(test_files)} files ({len(test_files) / len(all_files) * 100:.1f}%) - {test_genuine} genuine, {test_tampered} tampered"
+    )
 
     print(f"\nFiles created:")
     print(f"  Images directory: {images_dir} ({len(list(images_dir.iterdir()))} files)")

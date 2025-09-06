@@ -60,6 +60,33 @@ uv run python exports/inference/test_inference.py \
 - Resizes input images to 288x288 (matching ONNX model requirements)  
 - Provides both binary classification and pixel-level localization results
 
+### Checkpoint Conversion
+```bash
+# Convert training checkpoint to clean pretrained format
+uv run python exports/convert_training_to_pretrained.py \
+    --checkpoint path/to/ckpt_epoch_XXXXX.pyth \
+    --output exports/pretrained/your_model.pth
+
+# Include performance metrics placeholders in metadata
+uv run python exports/convert_training_to_pretrained.py \
+    --checkpoint path/to/ckpt_epoch_XXXXX.pyth \
+    --output exports/pretrained/your_model.pth \
+    --include-performance
+
+# Example: Convert epoch 24 checkpoint
+uv run python exports/convert_training_to_pretrained.py \
+    --checkpoint objectformer_doc_tamper_adamw_base/checkpoints/ckpt_epoch_00024.pyth \
+    --output exports/pretrained/objectformer_doc_tamper_epoch24.pth \
+    --include-performance
+```
+
+**Note:** The conversion script:
+- Extracts only model weights from training checkpoints (removes optimizer state, etc.)
+- Creates clean pretrained format suitable for transfer learning and sharing
+- Generates both `.pth` model file and `_metadata.json` with architecture info
+- Validates model state for completeness before conversion
+- Preserves original training configuration and epoch information
+
 ### Environment Setup
 Use Python 3.10 and use 'uv' as the package manager. The project uses pyproject.toml with locked dependencies for reproducible builds.
 

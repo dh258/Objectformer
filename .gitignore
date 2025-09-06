@@ -33,6 +33,7 @@ onnx/
 runs
 logs/
 visualizations/
+threshold_sweep/
 
 # Dataset
 training_dataset/

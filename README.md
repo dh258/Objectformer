@@ -14,6 +14,34 @@ uv run python tools/run.py --cfg configs/objectformer_bs24_lr2.5e-4.yaml
 
 while for evaluation, you could set TRAIN.ENABLE to False. For a better peformance on Pixel F1, you should adjust the TEST.THRES (0.5 by default) on each testing dataset.
 
+## Checkpoint Conversion
+
+To convert training checkpoints to clean pretrained format suitable for transfer learning and sharing:
+
+```bash
+# Convert training checkpoint to pretrained format
+uv run python exports/convert_training_to_pretrained.py \
+    --checkpoint path/to/ckpt_epoch_XXXXX.pyth \
+    --output exports/pretrained/your_model.pth
+
+# Include performance metrics placeholders in metadata
+uv run python exports/convert_training_to_pretrained.py \
+    --checkpoint path/to/ckpt_epoch_XXXXX.pyth \
+    --output exports/pretrained/your_model.pth \
+    --include-performance
+```
+
+The conversion script:
+- Extracts only model weights from training checkpoints (removes optimizer state, scheduler state, etc.)
+- Creates clean pretrained format (.pth) suitable for transfer learning
+- Generates metadata JSON file with model architecture and training information
+- Validates model state completeness before conversion
+- Preserves original training configuration and epoch information
+
+**Output files:**
+- `your_model.pth` - Clean pretrained model weights
+- `your_model_metadata.json` - Model architecture and training metadata
+
 ## ONNX Export
 
 To export a trained ObjectFormer model to ONNX format for deployment:
