@@ -13,6 +13,7 @@ from ObjectFormer.utils.build_helper import (
     build_model,
 )
 from ObjectFormer.utils.meters import EpochTimer, MetricLogger, SmoothedValue
+from ObjectFormer.utils.model_helpers import apply_freeze_strategy
 from ObjectFormer.utils.optimizer import build_optimizer
 from ObjectFormer.utils.scheduler import build_scheduler
 from ObjectFormer.utils.visualization import TensorBoardWriter
@@ -99,7 +100,8 @@ def train(local_rank, cfg):
     writer = TensorBoardWriter(log_dir=log_dir)
 
     model = build_model(cfg)
-    optimizer = build_optimizer(model.parameters(), cfg)
+    trainable_params = apply_freeze_strategy(model, cfg)
+    optimizer = build_optimizer(trainable_params, cfg)
     scheduler, total_epochs = build_scheduler(optimizer, cfg)
     scaler = torch.cuda.amp.GradScaler(enabled=cfg['TRAIN']['AMP_ENABLE'])
 
