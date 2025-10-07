@@ -40,3 +40,8 @@ training_dataset/
 
 # Inference results
 inference_results/
+
+# Test coverage
+.coverage
+htmlcov/
+.pytest_cache/

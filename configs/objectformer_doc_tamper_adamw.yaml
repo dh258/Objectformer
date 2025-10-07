@@ -3,8 +3,8 @@ DATALOADER:
   BATCH_SIZE: 4  # Reduced for MVP (100 samples)
   NUM_WORKERS: 4
 TRAIN:
-  ENABLE: True  # Changed to True for fine-tuning
-  MAX_EPOCH: 15  # Reduced for MVP fine-tuning
+  ENABLE: False  # Changed to True for fine-tuning
+  MAX_EPOCH: 25  # Reduced for MVP fine-tuning
   AUTO_RESUME: True
   EVAL_PERIOD: 1
   CHECKPOINT_PERIOD: 1
@@ -12,9 +12,9 @@ TRAIN:
   CHECKPOINT_EPOCH_RESET: False
   AMP_ENABLE: False  # Disabled for stability on small batches
 TEST:
-  ENABLE: True
-  CHECKPOINT_PATH: 'objectformer_doc_tamper_adamw_ktp_base/checkpoints/ckpt_epoch_00031.pyth'
-  THRES: 0.5
+  ENABLE: True  # Disable during training
+  CHECKPOINT_PATH: 'objectformer_doc_tamper_adamw_ktp_partial_frozen/checkpoints/ckpt_epoch_00021.pyth'
+  THRES: 0.4  # Lowered for conservative KYC flagging (minimize false negatives)
 MODEL:
   MODEL_NAME: ObjectFormer
   INPLANES: 64
@@ -36,12 +36,12 @@ OPTIMIZER:
   EPS: 0.00000001
   WEIGHT_DECAY: 0.01  # Increased 100x for regularization
   AMSGRAD: False
-  FREEZE_STRATEGY: freeze_backbone  # NEW: Only train heads for MVP
+  FREEZE_STRATEGY: freeze_stages_0_1_2  # Train layer_3 + heads for better feature learning
 DATASET:
   DATASET_NAME: TamperingDataset
   ROOT_DIR: training_dataset
-  TRAIN_SPLIT: train_split.txt
-  VAL_SPLIT: val_split.txt
+  TRAIN_SPLIT: train_split_rebalanced.txt
+  VAL_SPLIT: val_split_rebalanced.txt
   TEST_SPLIT: test_split.txt
   RETURN_MASK: True
   IMG_SIZE: 320
@@ -76,4 +76,4 @@ SCHEDULER:
   WARMUP_LR: 0
   WARMUP_EPOCHS: 0
 
-OUTPUT_DIR: 'objectformer_doc_tamper_adamw_ktp_base'
+OUTPUT_DIR: 'objectformer_doc_tamper_adamw_ktp_partial_frozen'

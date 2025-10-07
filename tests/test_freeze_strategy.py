@@ -211,6 +211,146 @@ class TestParameterCounts:
         assert trainable_after + frozen_after == total
 
 
+class TestFreezeStages012Strategy:
+    """Test the freeze_stages_0_1_2 strategy in detail."""
+
+    def test_freeze_stages_012_trains_layer3_and_heads(self, model_instance, minimal_full_config):
+        """
+        Test that freeze_stages_0_1_2 keeps layer_3 and heads trainable.
+
+        This validates that layer_3 (final backbone stage) and all heads
+        are trainable while earlier stages are frozen.
+        """
+        config = minimal_full_config.copy()
+        config['OPTIMIZER']['FREEZE_STRATEGY'] = 'freeze_stages_0_1_2'
+
+        trainable_params = list(apply_freeze_strategy(model_instance, config))
+
+        # Get names of all trainable parameters
+        trainable_names = [
+            name for name, param in model_instance.named_parameters()
+            if param.requires_grad
+        ]
+
+        # Check that layer_3 is trainable
+        assert any('layer_3' in name for name in trainable_names), \
+            "layer_3 should be trainable"
+
+        # Check that heads are trainable
+        assert any('last_fc' in name for name in trainable_names), \
+            "last_fc should be trainable"
+        assert any('localizer_0' in name for name in trainable_names), \
+            "localizer_0 should be trainable"
+        assert any('localizer_1' in name for name in trainable_names), \
+            "localizer_1 should be trainable"
+        assert any('localizer_2' in name for name in trainable_names), \
+            "localizer_2 should be trainable"
+
+        # Check that early stages are frozen
+        assert not any(name.startswith('conv1.') or name == 'conv1.weight' or name == 'conv1.bias' for name in trainable_names), \
+            "conv1 (stem) should be frozen"
+        assert not any('layer_0' in name for name in trainable_names), \
+            "layer_0 should be frozen"
+        assert not any('layer_1' in name for name in trainable_names), \
+            "layer_1 should be frozen"
+        assert not any('layer_2' in name for name in trainable_names), \
+            "layer_2 should be frozen"
+
+    def test_freeze_stages_012_correct_modules(self, model_instance, minimal_full_config):
+        """
+        Test that exactly the right modules have requires_grad=True.
+
+        More strict test - checks exact module states.
+        """
+        config = minimal_full_config.copy()
+        config['OPTIMIZER']['FREEZE_STRATEGY'] = 'freeze_stages_0_1_2'
+
+        apply_freeze_strategy(model_instance, config)
+
+        # layer_3 should be trainable
+        assert any(p.requires_grad for p in model_instance.layer_3.parameters()), \
+            "layer_3 should have trainable parameters"
+
+        # Heads should be trainable
+        assert model_instance.last_fc.weight.requires_grad
+        assert any(p.requires_grad for p in model_instance.localizer_0.parameters())
+        assert any(p.requires_grad for p in model_instance.localizer_1.parameters())
+        assert any(p.requires_grad for p in model_instance.localizer_2.parameters())
+
+        # Early stages should be frozen
+        assert not model_instance.conv1.weight.requires_grad
+        assert not any(p.requires_grad for p in model_instance.layer_0.parameters())
+        assert not any(p.requires_grad for p in model_instance.layer_1.parameters())
+        assert not any(p.requires_grad for p in model_instance.layer_2.parameters())
+
+    def test_frozen_params_no_gradients_stages_012(self, model_instance, minimal_full_config):
+        """
+        Test that frozen parameters don't accumulate gradients during backprop.
+
+        Critical for verifying that early stages remain unchanged.
+        """
+        config = minimal_full_config.copy()
+        config['OPTIMIZER']['FREEZE_STRATEGY'] = 'freeze_stages_0_1_2'
+
+        apply_freeze_strategy(model_instance, config)
+
+        # Forward pass
+        dummy_input = {'img': torch.randn(1, 3, 320, 320)}
+        detection, masks = model_instance(dummy_input)
+
+        # Create dummy loss and backward
+        loss = detection.sum() + sum(m.sum() for m in masks)
+        loss.backward()
+
+        # Check frozen layers have no gradient
+        assert model_instance.conv1.weight.grad is None, \
+            "Frozen conv1 should not have gradient"
+        for param in model_instance.layer_0.parameters():
+            assert param.grad is None, "Frozen layer_0 should not have gradients"
+        for param in model_instance.layer_2.parameters():
+            assert param.grad is None, "Frozen layer_2 should not have gradients"
+
+        # Check trainable layer has gradient
+        assert model_instance.last_fc.weight.grad is not None, \
+            "Trainable layer should have gradient"
+        # Check at least some layer_3 params have gradients
+        layer_3_has_grad = any(p.grad is not None for p in model_instance.layer_3.parameters())
+        assert layer_3_has_grad, "layer_3 should have some gradients"
+
+    def test_trainable_param_count_stages_012(self, model_instance, minimal_full_config):
+        """
+        Test that trainable parameter count is reasonable.
+
+        With freeze_stages_0_1_2, we expect ~60-70% of parameters to be trainable
+        (layer_3 is the largest stage with 768 channels + all heads).
+        """
+        config = minimal_full_config.copy()
+        config['OPTIMIZER']['FREEZE_STRATEGY'] = 'freeze_stages_0_1_2'
+
+        # Get initial count (all trainable)
+        initial_trainable = get_trainable_param_count(model_instance)
+
+        # Apply freeze strategy
+        apply_freeze_strategy(model_instance, config)
+
+        # Get new count
+        final_trainable = get_trainable_param_count(model_instance)
+        final_frozen = get_frozen_param_count(model_instance)
+
+        # Sanity checks
+        assert final_trainable + final_frozen == initial_trainable, \
+            "Total params should be conserved"
+
+        # Check that we have significantly more trainable params than freeze_backbone
+        # (because layer_3 is unfrozen - it's the largest stage)
+        assert final_trainable > initial_trainable * 0.50, \
+            f"Expected >50% trainable, got {final_trainable/initial_trainable*100:.1f}%"
+
+        # But still frozen some portion (early stages)
+        assert final_frozen > initial_trainable * 0.30, \
+            f"Expected >30% frozen, got {final_frozen/initial_trainable*100:.1f}%"
+
+
 class TestIntegrationWithOptimizer:
     """Test integration with PyTorch optimizers."""
 
